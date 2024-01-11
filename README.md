@@ -1,4 +1,4 @@
-  BUKU TAMU Badan Pusat Statistik Ogan Ilir
+ # <center>BUKU TAMU Badan Pusat Statistik Ogan Ilir</center>
 
 PETUNJUK CARA PENGGUNAAN
 
