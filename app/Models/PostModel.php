@@ -233,6 +233,13 @@ class PostModel extends Model
             ->get()
             ->getResultArray();
     }
+    public function getRatingBydate($selected_date)
+    {
+        return $this->db->table('feedback')
+            ->where('DATE(created_at)', $selected_date)
+            ->get()
+            ->getResultArray();
+    }
     public function getAllVisitors($start_date = null, $end_date = null)
     {
         $builder = $this->db->table('pengunjung');
@@ -240,6 +247,16 @@ class PostModel extends Model
         if ($start_date && $end_date) {
             $builder->where('waktu_masuk >=', $start_date)
                 ->where('waktu_keluar <=', $end_date);
+        }
+
+        return $builder->get()->getResultArray();
+    }
+    public function getAllRating($start_date = null)
+    {
+        $builder = $this->db->table('feedback');
+
+        if ($start_date) {
+            $builder->where('created_at >=', $start_date);
         }
 
         return $builder->get()->getResultArray();
@@ -260,6 +277,23 @@ class PostModel extends Model
             ->get()
             ->getResultArray();
     }
+    public function searchRatings($search_query)
+    {
+        $query = $this->db->table('feedback');
+
+        if ($search_query === 'puas' || $search_query === 'tidakpuas') {
+            $query->where('rating', $search_query);
+        } else {
+            $query->like('rating', $search_query)
+                ->orLike('message', $search_query)
+                ->orLike('created_at', $search_query);
+            // Add more fields as needed
+        }
+
+        return $query->get()->getResultArray();
+    }
+
+
     public function cariVisitor($search_query)
     {
         return $this->db->table('pengunjung')

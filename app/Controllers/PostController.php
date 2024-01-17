@@ -14,11 +14,95 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class PostController extends BaseController
 {
     protected $PostModel; // Tambahkan properti model
+    protected $FeedbackModel; // Add this property to hold an instance of FeedbackModel
+
     public function __construct()
     {
         $this->PostModel = new PostModel(); // Muat model di konstruktor
+        $this->FeedbackModel = new FeedbackModel(); // Muat model di konstruktor
 
     }
+    public function exportFeedbackToExcel()
+    {
+        // Fetch data from your model (adjust the following line based on your actual implementation)
+        $data = $this->FeedbackModel->getAllData();
+
+        // Generate Excel file
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Add data to the sheet (adjust the following lines based on your actual data structure)
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Rating');
+        $sheet->setCellValue('C1', 'Alasan');
+        $sheet->setCellValue('D1', 'Tanggal');
+
+        $row = 2;
+        foreach ($data as $item) {
+            $rating = isset($item['rating']) ? $item['rating'] : '';
+            $alasan = isset($item['alasan']) ? $item['message'] : '';
+            $tanggal = isset($item['tanggal']) ? $item['created_at'] : '';
+
+            $sheet->setCellValue('A' . $row, $row - 1);
+            $sheet->setCellValue('B' . $row, $rating);
+            $sheet->setCellValue('C' . $row, $alasan);
+            $sheet->setCellValue('D' . $row, $tanggal);
+            $row++;
+        }
+
+        // Create Excel file
+        $filename = 'FeedbackData.xlsx';
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save($filename);
+
+        // Set headers for download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        readfile($filename);
+
+        // Remove the file after sending
+        unlink($filename);
+        exit();
+    }
+
+    public function exportFeedback()
+    {
+        $data = $this->FeedbackModel->getAllData();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Table Feedback');
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Rating');
+        $sheet->setCellValue('C1', 'Alasan');
+        $sheet->setCellValue('D1', 'Tanggal');
+
+        $i = 2;
+        foreach ($data as $row) {
+            $sheet->setCellValue('A' . $i, $i - 1);
+            $sheet->setCellValue('B' . $i, $row['rating']);
+            $sheet->setCellValue('C' . $i, $row['message']);
+            $sheet->setCellValue('D' . $i, $row['created_at']);
+            $i++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'List-Feedback_BPS-Ogan-ilir.xlsx';
+        $writer->save($fileName);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($fileName));
+        readfile($fileName);
+        exit;
+    }
+
     public function exportToExcel()
     {
         // Fetch data from your model (adjust the following line based on your actual implementation)
@@ -151,6 +235,8 @@ class PostController extends BaseController
 
 
 
+
+
         // Call the model method to insert data into the database
 
 
@@ -181,6 +267,7 @@ class PostController extends BaseController
 
 
     }
+
 
     public function pst()
     {
@@ -394,6 +481,14 @@ class PostController extends BaseController
 
         return view('admin/list', $data);
     }
+    public function filterRating()
+    {
+        $selected_date = $this->request->getPost('selected_date');
+
+        $data['pengunjung'] = $this->PostModel->getRatingBydate($selected_date);
+
+        return view('admin/puas', $data);
+    }
     public function filterTanggal()
     {
         $selected_date = $this->request->getPost('selected_date');
@@ -415,6 +510,20 @@ class PostController extends BaseController
 
         return view('admin/list', $data);
     }
+    public function Ratings()
+    {
+        $search_query = $this->request->getPost('search_query');
+
+        if ($search_query) {
+            $data['pengunjung'] = $this->PostModel->searchRatings($search_query);
+        } else {
+            // Load all visitors if no search query is provided
+            $data['pengunjung'] = $this->PostModel->getAllRating();
+        }
+
+        return view('admin/puas', $data);
+    }
+
     public function cari()
     {
         $search_query = $this->request->getPost('search_query');

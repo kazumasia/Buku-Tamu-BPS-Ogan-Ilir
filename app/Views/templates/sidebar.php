@@ -29,6 +29,11 @@
                 <span>Pengunjung</span></a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('admin/puas'); ?>">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Tabel Kepuasan</span></a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<?= base_url('admin/statistik'); ?>">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Statistik</span></a>

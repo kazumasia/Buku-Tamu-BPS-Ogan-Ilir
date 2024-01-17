@@ -25,4 +25,5 @@ class Feedback extends BaseController
         // Tambahkan respons atau redireksi sesuai kebutuhan Anda
         return redirect()->to(base_url());
     }
+
 }

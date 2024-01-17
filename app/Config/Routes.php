@@ -14,6 +14,7 @@ $routes->get('/admin/(:num)', 'Admin::detail/$1', ['filter' => 'role:admin']);
 $routes->get('/admin/list', 'Admin::list', ['filter' => 'role:admin']);
 $routes->get('edit/(:num)', 'PostController::edit/$1');
 $routes->get('admin/delete/(:segment)', 'Admin::delete/$1', ['as' => 'delete_pengunjung']);
+$routes->get('admin/deletePuas/(:segment)', 'Admin::deletePuas/$1', ['as' => 'delete_puas']);
 $routes->get('get-keperluan-stats', 'PostController::getKeperluanStats');
 $routes->get('get-gender-stats', 'PostController::getGenderStats');
 $routes->get('get-pekerjaan-stats', 'PostController::getPekerjaanStats');
@@ -28,6 +29,7 @@ $routes->get('feedback', 'Feedback::index');
 
 
 $routes->get('export-to-excel', 'PostController::exportToExcel');
+$routes->get('export-feedback', 'PostController::exportFeedback', ['as' => 'export_feedback']);
 
 
 

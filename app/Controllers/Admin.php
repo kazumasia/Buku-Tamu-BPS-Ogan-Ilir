@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\PostModel;
+use App\Models\FeedbackModel;
 
 class Admin extends BaseController
 {
@@ -161,4 +162,21 @@ class Admin extends BaseController
 
         return view('admin/statistik', );
     }
+
+    public function puas()
+    {
+        $FeedbackModel = new FeedbackModel();
+        $data['pengunjung'] = $FeedbackModel->findAll();
+
+        return view('admin/puas', $data);
+    }
+
+    public function deletePuas($id)
+    {
+        $pengunjungModel = new FeedbackModel();
+        $pengunjungModel->delete($id);
+
+        return redirect()->to('/admin/puas')->with('success', 'Pengunjung deleted successfully.');
+    }
+
 }
